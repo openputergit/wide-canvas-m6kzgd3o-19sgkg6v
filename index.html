@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram - Share Your Moments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div id="app" class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white border-b fixed w-full top-0 z-50">
+            <div class="max-w-5xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="text-xl font-bold">Photogram</div>
+                    <div class="flex space-x-4">
+                        <button id="homeBtn" class="p-2 hover:bg-gray-100 rounded-full" onclick="showSection('feed')">
+                            <i class="bi bi-house-door text-xl"></i>
+                        </button>
+                        <button id="exploreBtn" class="p-2 hover:bg-gray-100 rounded-full" onclick="showSection('explore')">
+                            <i class="bi bi-compass text-xl"></i>
+                        </button>
+                        <button id="uploadBtn" class="p-2 hover:bg-gray-100 rounded-full" onclick="showUploadModal()">
+                            <i class="bi bi-plus-square text-xl"></i>
+                        </button>
+                        <button id="chatBtn" class="p-2 hover:bg-gray-100 rounded-full" onclick="showSection('chat')">
+                            <i class="bi bi-chat text-xl"></i>
+                        </button>
+                        <button id="profileBtn" class="p-2 hover:bg-gray-100 rounded-full" onclick="showSection('profile')">
+                            <i class="bi bi-person-circle text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="pt-16 pb-20">
+            <!-- Auth Section -->
+            <section id="auth" class="max-w-md mx-auto p-6">
+                <div class="bg-white rounded-lg shadow-sm p-8 mb-4">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Welcome to Photogram</h2>
+                    <form id="loginForm" class="space-y-4">
+                        <div>
+                            <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                            Log In
+                        </button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p>Don't have an account? <a href="#" onclick="toggleAuth()" class="text-blue-500">Sign up</a></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feed Section -->
+            <section id="feed" class="max-w-2xl mx-auto px-4 hidden">
+                <!-- Stories -->
+                <div class="bg-white rounded-lg shadow-sm p-4 mb-4 overflow-x-auto">
+                    <div class="flex space-x-4">
+                        <!-- Story items will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Posts -->
+                <div id="posts" class="space-y-4">
+                    <!-- Posts will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Explore Section -->
+            <section id="explore" class="max-w-5xl mx-auto px-4 hidden">
+                <div class="grid grid-cols-3 gap-1 md:gap-4">
+                    <!-- Explore posts will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="max-w-2xl mx-auto px-4 hidden">
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div class="border-b p-4">
+                        <h2 class="text-xl font-bold">Messages</h2>
+                    </div>
+                    <div id="chatMessages" class="h-96 overflow-y-auto p-4">
+                        <!-- Chat messages will be inserted here -->
+                    </div>
+                    <div class="p-4 border-t">
+                        <div class="flex space-x-2">
+                            <input type="text" id="messageInput" placeholder="Message..." class="flex-1 p-2 border rounded">
+                            <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-2 rounded">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="max-w-2xl mx-auto px-4 hidden">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-20 h-20 bg-gray-200 rounded-full"></div>
+                        <div>
+                            <h2 class="text-xl font-bold" id="profileName">User Name</h2>
+                            <p class="text-gray-500">@username</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 text-center border-y py-4 mb-6">
+                        <div>
+                            <div class="font-bold">0</div>
+                            <div class="text-gray-500">Posts</div>
+                        </div>
+                        <div>
+                            <div class="font-bold">0</div>
+                            <div class="text-gray-500">Followers</div>
+                        </div>
+                        <div>
+                            <div class="font-bold">0</div>
+                            <div class="text-gray-500">Following</div>
+                        </div>
+                    </div>
+                    <div id="userPosts" class="grid grid-cols-3 gap-1">
+                        <!-- User posts will be inserted here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Upload Modal -->
+        <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="bg-white rounded-lg max-w-md mx-auto mt-20 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Create New Post</h3>
+                    <button onclick="hideUploadModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <form id="uploadForm" class="space-y-4">
+                    <div class="border-2 border-dashed rounded-lg p-4 text-center">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*">
+                        <label for="fileInput" class="cursor-pointer">
+                            <i class="bi bi-image text-4xl text-gray-400"></i>
+                            <p class="mt-2 text-gray-500">Click to upload photo</p>
+                        </label>
+                    </div>
+                    <textarea id="caption" placeholder="Write a caption..." class="w-full p-2 border rounded"></textarea>
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                        Share
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .story-ring {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+    </style>
+
+    <script>
+        // Initialize app data
+        const appState = {
+            userId: localStorage.getItem('userId') || `user-${Date.now()}`,
+            appSlug: 'instagram-clone-123456',
+            isAuthenticated: false,
+            currentUser: null,
+            posts: [],
+            stories: [],
+            messages: []
+        };
+
+        // Save userId to localStorage if not exists
+        if (!localStorage.getItem('userId')) {
+            localStorage.setItem('userId', appState.userId);
+        }
+
+        // Initialize MongoDB collection
+        async function initializeDatabase() {
+            try {
+                const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer 7zQgiPabtlayQoAhFXjKM502iyC2',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        appSlug: appState.appSlug,
+                        action: 'read',
+                        collection: 'posts'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    appState.posts = data.result;
+                    renderPosts();
+                }
+            } catch (error) {
+                console.error('Error initializing database:', error);
+            }
+        }
+
+        // Authentication functions
+        function toggleAuth() {
+            const form = document.getElementById('loginForm');
+            const title = document.querySelector('#auth h2');
+            const toggle = document.querySelector('#auth a');
+            
+            if (title.textContent.includes('Welcome')) {
+                title.textContent = 'Create Account';
+                toggle.textContent = 'Log in';
+            } else {
+                title.textContent = 'Welcome to Photogram';
+                toggle.textContent = 'Sign up';
+            }
+        }
+
+        // Navigation functions
+        function showSection(sectionId) {
+            if (!appState.isAuthenticated && sectionId !== 'auth') {
+                document.getElementById('auth').classList.remove('hidden');
+                return;
+            }
+
+            document.querySelectorAll('main > section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Post functions
+        function renderPosts() {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = appState.posts.map(post => `
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div class="p-4 flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                        <div class="font-semibold">${post.data.username || 'User'}</div>
+                    </div>
+                    <img src="${post.data.image_url || 'https://via.placeholder.com/500'}" class="w-full" alt="Post">
+                    <div class="p-4">
+                        <div class="flex space-x-4 mb-2">
+                            <button class="hover:text-gray-600"><i class="bi bi-heart"></i></button>
+                            <button class="hover:text-gray-600"><i class="bi bi-chat"></i></button>
+                            <button class="hover:text-gray-600"><i class="bi bi-share"></i></button>
+                        </div>
+                        <p><span class="font-semibold">${post.data.username || 'User'}</span> ${post.data.caption}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Upload functions
+        function showUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function hideUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+        }
+
+        async function handleUpload(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const caption = document.getElementById('caption').value;
+            
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('userId', appState.userId);
+                formData.append('appSlug', appState.appSlug);
+
+                try {
+                    // Upload file
+                    const uploadResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/storage/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer 7zQgiPabtlayQoAhFXjKM502iyC2'
+                        },
+                        body: formData
+                    });
+                    const uploadData = await uploadResponse.json();
+
+                    if (uploadData.success) {
+                        // Create post in database
+                        const postResponse = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer 7zQgiPabtlayQoAhFXjKM502iyC2',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                appSlug: appState.appSlug,
+                                action: 'create',
+                                collection: 'posts',
+                                data: {
+                                    userId: appState.userId,
+                                    image_url: uploadData.url,
+                                    caption: caption,
+                                    timestamp: new Date().toISOString()
+                                }
+                            })
+                        });
+                        const postData = await postResponse.json();
+
+                        if (postData.success) {
+                            hideUploadModal();
+                            await initializeDatabase();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error uploading post:', error);
+                }
+            }
+        }
+
+        // Chat functions
+        function initializeChatbot() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="bg-gray-100 rounded p-3 mb-4">
+                    <p class="font-semibold">AI Assistant</p>
+                    <p>Hello! How can I help you today?</p>
+                </div>
+            `;
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Add user message
+                chatMessages.innerHTML += `
+                    <div class="flex justify-end mb-4">
+                        <div class="bg-blue-500 text-white rounded p-3 max-w-xs">
+                            <p>${message}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Get AI response
+                try {
+                    const response = await fetch('https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/ai', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer 7zQgiPabtlayQoAhFXjKM502iyC2',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            messages: [{
+                                role: 'user',
+                                content: [{
+                                    type: 'text',
+                                    text: message
+                                }]
+                            }]
+                        })
+                    });
+                    const data = await response.json();
+
+                    // Add AI response
+                    chatMessages.innerHTML += `
+                        <div class="bg-gray-100 rounded p-3 mb-4 max-w-xs">
+                            <p class="font-semibold">AI Assistant</p>
+                            <p>${data.message}</p>
+                        </div>
+                    `;
+
+                    // Clear input and scroll to bottom
+                    messageInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                }
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            appState.isAuthenticated = true;
+            showSection('feed');
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', handleUpload);
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize app
+        window.onload = () => {
+            showSection('auth');
+            initializeDatabase();
+            initializeChatbot();
+        };
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
